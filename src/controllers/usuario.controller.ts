@@ -18,7 +18,7 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {Usuario} from '../models';
+import {Credenciales, Usuario} from '../models';
 import {UsuarioRepository} from '../repositories';
 import {AdministradorClavesService} from '../services';
 
@@ -157,5 +157,38 @@ export class UsuarioController {
   })
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.usuarioRepository.deleteById(id);
+  }
+
+  /**
+   * Metodos adicionales
+   */
+
+  @post('identificar-usuarios')
+  @response(200, {
+    description: 'Identificador de Usuarios',
+    content: {'application/json': {schema: getModelSchemaRef(Credenciales)}},
+  })
+  async identificadorUsuarios(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Credenciales, {
+            title: 'Identificar usuarios',
+          }),
+        },
+      },
+    })
+    credenciales: Credenciales,
+  ): Promise<Usuario | null> {
+    const usuario = await this.usuarioRepository.findOne({
+      where: {
+        correo: credenciales.Usuario,
+        clave: credenciales.clave,
+      },
+    });
+    if (usuario) {
+      // generar un token y agregarlo a la respuesta
+    }
+    return usuario;
   }
 }
