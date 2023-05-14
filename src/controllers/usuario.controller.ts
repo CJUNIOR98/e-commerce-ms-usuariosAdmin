@@ -49,6 +49,7 @@ export class UsuarioController {
     usuario: Omit<Usuario, '_id'>,
   ): Promise<Usuario> {
     const clave = this.servicioClaves.crearClaveAleatoria();
+    console.log(clave);
     const claveCifrada = this.servicioClaves.cifrarTexto(clave);
     usuario.clave = claveCifrada;
     const usuarioCreado = await this.usuarioRepository.create(usuario);
